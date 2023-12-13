@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    ><View
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background"/>
+    <ImageView
+        android:id="@+id/bt_nconnect_img"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="150dp"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/bt_notconnect_img" />
+    <ImageView
+        android:id="@+id/bt_connect_img"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="150dp"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone"
+        android:src="@drawable/bluetooth_frame_img" />
+    <TextView
+        android:layout_marginTop="20dp"
+        android:id="@+id/notavbl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/red"
+        android:layout_below="@id/bt_nconnect_img"
+        android:textSize="15dp"
+        android:layout_centerHorizontal="true"
+        android:textStyle="bold"
+        android:text="Devices not found" />
+    <TextView
+        android:layout_marginTop="20dp"
+        android:id="@+id/avbl_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#ffffff"
+        android:layout_below="@id/bt_connect_img"
+        android:textSize="15dp"
+        android:layout_centerHorizontal="true"
+        android:textStyle="bold"
+        android:text="Available devices" />
+    <ListView android:id="@+id/paired_devices"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="8sp"
+        android:transcriptMode="alwaysScroll"
+        android:layout_below="@+id/avbl_txt"
+        android:layout_weight="1"
+        />
+    <!--    <TextView android:id="@+id/title_new_devices"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:text="@string/title_other_devices"-->
+    <!--        android:visibility="gone"-->
+    <!--        android:background="#333"-->
+    <!--        android:textColor="#fff"-->
+    <!--        android:paddingLeft="5dp"-->
+    <!--    />-->
+    <ListView
+        android:id="@+id/new_devices"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_above="@id/button_scan"
+        android:layout_marginLeft="20dp"
+        android:layout_below="@+id/paired_devices"
+        android:layout_marginRight="20dp"
+        android:textSize="8sp"
+        android:transcriptMode="alwaysScroll" />
+    <Button android:id="@+id/button_scan"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:textColor="#000000"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"
+        android:background="@drawable/rounded_ripple"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="20dp"
+        android:text="@string/button_scan"
+        />
+</RelativeLayout>
