@@ -384,19 +384,23 @@ public class MainActivity extends AppCompatActivity {
         btn_connect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.BLUETOOTH_CONNECT)
-                        != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(MainActivity.this,
-                            new String[]{android.Manifest.permission.BLUETOOTH_CONNECT}, MY_PERMISSIONS_REQUEST_BLUETOOTH);
-                }
+
 
 
                 if (!mBluetoothAdapter.isEnabled()) {
                     Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                    if (ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.BLUETOOTH_CONNECT)
+                            != PackageManager.PERMISSION_GRANTED) {
+                        ActivityCompat.requestPermissions(MainActivity.this,
+                                new String[]{android.Manifest.permission.BLUETOOTH_CONNECT}, MY_PERMISSIONS_REQUEST_BLUETOOTH);
+                    }
                     startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
-                } else{Intent intent = new Intent(MainActivity.this, DeviceListActivity.class);
+                }else{Intent intent = new Intent(MainActivity.this, DeviceListActivity.class);
                     startActivityForResult(intent, REQUEST_CONNECT_DEVICE);
+                    finish();
                 }
+
+
 
                 if (mBtService == null) setupChat();
 
