@@ -81,7 +81,7 @@ public class DeviceListActivity extends Activity {
             String info = ((TextView) textView).getText().toString();
             String address = info.substring(info.length() - 17);
             Log.d("address", address);
-if(info.contains("IFIX")||info.contains("OBD")) {
+if(info.contains("FIX")||info.contains("OBD")) {
     // Create the result Intent and include the MAC address
     Intent intent = new Intent();
     intent.putExtra(EXTRA_DEVICE_ADDRESS, address);
