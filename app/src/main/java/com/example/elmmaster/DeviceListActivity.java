@@ -80,18 +80,18 @@ public class DeviceListActivity extends Activity {
             // Get the device MAC address, which is the last 17 chars in the View
             String info = ((TextView) textView).getText().toString();
             String address = info.substring(info.length() - 17);
-            Log.d("address", address);
-if(info.contains("IFIX")||info.contains("OBD")) {
-    // Create the result Intent and include the MAC address
-    Intent intent = new Intent();
-    intent.putExtra(EXTRA_DEVICE_ADDRESS, address);
+            if(info.contains("iFIX")||info.contains("OBD")) {
+            // Create the result Intent and include the MAC address
+             Intent intent = new Intent();
+             intent.putExtra(EXTRA_DEVICE_ADDRESS, address);
+                Log.d("address", address);
 
-    // Set result and finish this Activity
-    setResult(Activity.RESULT_OK, intent);
-    finish();
-}else {
-    Toast.makeText(DeviceListActivity.this,"Please Select an Ifix device",Toast.LENGTH_SHORT).show();
-}
+                // Set result and finish this Activity
+             setResult(Activity.RESULT_OK, intent);
+             finish();
+             }else {
+             Toast.makeText(DeviceListActivity.this,"Please Select an Ifix device",Toast.LENGTH_SHORT).show();
+            }
         }
     };
 

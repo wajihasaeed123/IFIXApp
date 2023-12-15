@@ -118,11 +118,11 @@ public class MainActivity extends AppCompatActivity {
             PROTOCOL = "ATDP",
             RESET = "ATZ",
             PIDS_SUPPORTED20 = "0100",
-            ENGINE_COOLANT_TEMP = "0105",  //A-40
-            ENGINE_RPM = "010C",  //((A*256)+B)/4
-            ENGINE_LOAD = "0104",  // A*100/255
+            ENGINE_COOLANT_TEMP = "2105",  //A-40
+            ENGINE_RPM = "210C",  //((A*256)+B)/4
+            ENGINE_LOAD = "2104",  // A*100/255
             VEHICLE_SPEED = "010D",  //A
-            INTAKE_AIR_TEMP = "010F",  //A-40
+            INTAKE_AIR_TEMP = "210F",  //A-40
             MAF_AIR_FLOW = "0110", //MAF air flow rate 0 - 655.35	grams/sec ((256*A)+B) / 100  [g/s]
             ENGINE_OIL_TEMP = "015C",  //A-40
             FUEL_RAIL_PRESSURE = "0122", // ((A*256)+B)*0.079
@@ -385,8 +385,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-
-
                 if (!mBluetoothAdapter.isEnabled()) {
                     Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                     if (ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.BLUETOOTH_CONNECT)
@@ -397,11 +395,7 @@ public class MainActivity extends AppCompatActivity {
                     startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
                 }else{Intent intent = new Intent(MainActivity.this, DeviceListActivity.class);
                     startActivityForResult(intent, REQUEST_CONNECT_DEVICE);
-                    finish();
                 }
-
-
-
                 if (mBtService == null) setupChat();
 
 //                if (item.getTitle().equals("ConnectBT")) {
@@ -441,6 +435,7 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case REQUEST_CONNECT_DEVICE:
+                Log.d("resultok","called");
                 // When DeviceListActivity returns with a device to connect
                 if (resultCode == MainActivity.RESULT_OK) {
                     connectDevice(data);
@@ -715,6 +710,7 @@ public class MainActivity extends AppCompatActivity {
         // Get the device MAC address
         String address = data.getExtras().getString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
         // Get the BluetoothDevice object
+        Log.d("address2",address);
         BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
         try {
             // Attempt to connect to the device
@@ -1088,11 +1084,13 @@ public class MainActivity extends AppCompatActivity {
                 }
             }else{
                 tmpmsg1 = dataRecieved.trim();
+                int index2 = tmpmsg1.indexOf("61");
+                String newdata=tmpmsg1.substring(index2,tmpmsg1.length());
                 Mylogger.logAnalysePIDS( "my tmpmsg1: "+ tmpmsg1);
-                if (tmpmsg1.substring(0, 2).equals("01")) {
-                    PID1 = tmpmsg1.substring(2, 4);
+                if (newdata.substring(0, 2).equals("61")) {
+                    PID1 = newdata.substring(2, 4);
                   //  String A1=tmpmsg1.substring(4,6);
-                    A = Integer.parseInt(tmpmsg1.substring(4, 6), 16);
+                    A = Integer.parseInt(newdata.substring(4, 6), 16);
                     Log.d("A2", String.valueOf(A));
 
                     // String B1=tmpmsg1.substring(6,8);
@@ -1142,7 +1140,7 @@ public class MainActivity extends AppCompatActivity {
                         case "0C": //PID(0C): RPM
 
                             //((A*256)+B)/4
-                            B = Integer.parseInt(tmpmsg1.substring(6, 8), 16);
+                            B = Integer.parseInt(newdata.substring(6, 8), 16);
                             Log.d("rpmB", String.valueOf(B));
                             val = ((A * 256) + B) / 4;
                             intval = (int) val;
