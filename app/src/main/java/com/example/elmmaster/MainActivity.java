@@ -562,34 +562,32 @@ public class MainActivity extends AppCompatActivity {
             commandslist.add(i, VOLTAGE);
 
             if (preferences.getBoolean("checkboxENGINE_RPM", true)) {
-                commandslist.add(i, ENGINE_RPM);
-                i++;
-            }
-
-            if (preferences.getBoolean("checkboxVEHICLE_SPEED", true)) {
-                commandslist.add(i, VEHICLE_SPEED);
-                i++;
+                commandslist.add(i, "010C");
+                commandslist.add(i+1,"210C");
+                i+=2;
+//                i++;
             }
 
             if (preferences.getBoolean("checkboxENGINE_LOAD", true)) {
-                commandslist.add(i, ENGINE_LOAD);
-                i++;
+                commandslist.add(i, "0104");
+                commandslist.add(i + 1, "2104");
+                i += 2;
+//                i++;
             }
 
             if (preferences.getBoolean("checkboxENGINE_COOLANT_TEMP", true)) {
-                commandslist.add(i, ENGINE_COOLANT_TEMP);
-                i++;
+                commandslist.add(i, "0105");
+                commandslist.add(i + 1, "2105");
+                i += 2;
+//                i++;
             }
 
             if (preferences.getBoolean("checkboxINTAKE_AIR_TEMP", true)) {
-                commandslist.add(i, INTAKE_AIR_TEMP);
-                i++;
+                commandslist.add(i, "010F");
+                commandslist.add(i + 1, "210F");
+                i += 2;
+//                i++;
             }
-
-            if (preferences.getBoolean("checkboxMAF_AIR_FLOW", true)) {
-                commandslist.add(i, MAF_AIR_FLOW);
-            }
-
             whichCommand = 0;
         }
     }
