@@ -818,6 +818,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+    boolean isNewTmp1Set = false;
 
     private void analysMsg(Message msg) {
 
@@ -840,13 +841,31 @@ public class MainActivity extends AppCompatActivity {
                 sendEcuMessage(sPIDs);
                 return;
             }
+            String newtmp1 = null;
+            String newtmp2 = null;
 
+
+            if (tmpmsg.contains("41")) {
+                newtmp1 = tmpmsg;
+                isNewTmp1Set = true;
+            } else if (tmpmsg.startsWith("21")  ) {
+                newtmp2 = tmpmsg;
+            }
 
             try {
-                analysPIDS(tmpmsg);
+                if (newtmp1 != null) {
+                    Log.d("newtmp1", newtmp1);
+                    analysPIDS(newtmp1);
+                } else if (newtmp2 != null && !isNewTmp1Set) {
+                    Log.d("newtmp2", newtmp2);
+                    analysPIDS(newtmp2);
+                } else {
+                    // Handle other cases if needed
+                }
             } catch (Exception e) {
-                  Info.setText("Error : " + e.getMessage());
+                Info.setText("Error : " + e.getMessage());
             }
+
 
             sendDefaultCommands();
         }
@@ -1010,77 +1029,64 @@ public class MainActivity extends AppCompatActivity {
            Log.d("index", String.valueOf(index));
             String tmpmsg = null;
             String tmpmsg1 = null;
-
+            if(dataRecieved.substring(0,2).equals("01")) {
             if (index != -1) {
-
-                tmpmsg1 = dt2.substring(index, dt2.length());
-                Log.d("tmpmsg1",tmpmsg1);
-                if (tmpmsg1.substring(0, 2).equals("41")) {
-                    PID1 = tmpmsg1.substring(2, 4);
-                    String A1=tmpmsg1.substring(4,6);
-                    A = Integer.parseInt(tmpmsg1.substring(4, 6), 16);
-                    Log.d("A", String.valueOf(A));
-
-                    // String B1=tmpmsg1.substring(6,8);
-                    Log.d("valueB", String.valueOf(B));
-                    Log.d("mypid", String.valueOf(PID1));
-
-
-                    switch (PID1) {
-
-                        case "04"://PID(04): Engine Load
-
-                            // A*100/255
-                            Log.d("loadA", String.valueOf(A));
-                            val = A * 100 / 255;
-                            Log.d("val", String.valueOf(val));
-                            int calcLoad = (int) val;
-
-                            engineLoad.setText(Integer.toString(calcLoad) + " %");
-                            mConversationArrayAdapter.add("Engine Load: " + Integer.toString(calcLoad) + " %");
-                            Log.d("load", String.valueOf(calcLoad));
-                            double FuelFlowLH = (mMaf * calcLoad * mEnginedisplacement / 1000.0 / 714.0) + 0.8;
-
-                            if (calcLoad == 0)
-                                FuelFlowLH = 0;
-
-                            avgconsumption.add(FuelFlowLH);
-                            mConversationArrayAdapter.add("Fuel Consumption: " + String.format("%10.1f", calculateAverage(avgconsumption)).trim() + " l/h");
-                            break;
-
-                        case "05"://PID(05): Coolant Temperature
-                            Log.d("coolantA", String.valueOf(A));
-                            // A-40
-                            tempC = A - 40;
-                            coolantTemp = tempC;
-                            coolantTemperature.setText(Integer.toString(coolantTemp) + " C°");
-                            mConversationArrayAdapter.add("Enginetemp: " + Integer.toString(tempC) + " C°");
-                            Log.d("coolantemp", String.valueOf(coolantTemp));
-                            break;
-
-                        case "0F"://PID(0F): Intake Temperature
-                            tempC = A - 40;
-                            intakeairtemp = tempC;
-                            Air_temp.setText(Integer.toString(intakeairtemp) + " C°");
-                            mConversationArrayAdapter.add("Intakeairtemp: " + Integer.toString(intakeairtemp) + " C°");
-
-                            break;
-                        case "0C": //PID(0C): RPM
-
-                            //((A*256)+B)/4
-                            B = Integer.parseInt(tmpmsg1.substring(6, 8), 16);
-                            Log.d("rpmB", String.valueOf(B));
-                            val = ((A * 256) + B) / 4;
-                            intval = (int) val;
-                            rpmval = intval;
-                            Log.d("rpm", String.valueOf(intval));
-                            rpm.setTargetValue(intval / 100);
-
-                            break;
-                    }
-
-                }
-            }else{
+            tmpmsg1 = dt2.substring(index, dt2.length());
+            Log.d("tmpmsg1", tmpmsg1);
+            if (tmpmsg1.substring(0, 2).equals("41")) {
+            PID1 = tmpmsg1.substring(2, 4);
+            String A1 = tmpmsg1.substring(4, 6);
+            A = Integer.parseInt(tmpmsg1.substring(4, 6), 16);
+            Log.d("A", String.valueOf(A));
+            // String B1=tmpmsg1.substring(6,8);
+            Log.d("valueB", String.valueOf(B));
+            Log.d("mypid", String.valueOf(PID1));
+            switch (PID1) {
+                case "04"://PID(04): Engine Load
+                    // A*100/255
+                    Log.d("loadA", String.valueOf(A));
+                    val = A * 100 / 255;
+                    Log.d("val", String.valueOf(val));
+                    int calcLoad = (int) val;
+                    engineLoad.setText(Integer.toString(calcLoad) + " %");
+                    mConversationArrayAdapter.add("Engine Load: " + Integer.toString(calcLoad) + " %");
+                    Log.d("load", String.valueOf(calcLoad));
+                    double FuelFlowLH = (mMaf * calcLoad * mEnginedisplacement / 1000.0 / 714.0) + 0.8;
+                    if (calcLoad == 0)
+                        FuelFlowLH = 0;
+                    avgconsumption.add(FuelFlowLH);
+                    mConversationArrayAdapter.add("Fuel Consumption: " + String.format("%10.1f", calculateAverage(avgconsumption)).trim() + " l/h");
+                    break;
+                case "05"://PID(05): Coolant Temperature
+                    Log.d("coolantA", String.valueOf(A));
+                    // A-40
+                    tempC = A - 40;
+                    coolantTemp = tempC;
+                    coolantTemperature.setText(Integer.toString(coolantTemp) + " C°");
+                    mConversationArrayAdapter.add("Enginetemp: " + Integer.toString(tempC) + " C°");
+                    Log.d("coolantemp", String.valueOf(coolantTemp));
+                    break;
+                case "0F"://PID(0F): Intake Temperature
+                    tempC = A - 40;
+                    intakeairtemp = tempC;
+                    Air_temp.setText(Integer.toString(intakeairtemp) + " C°");
+                    mConversationArrayAdapter.add("Intakeairtemp: " + Integer.toString(intakeairtemp) + " C°");
+                    Log.d("air1", String.valueOf(intakeairtemp));
+                    break;
+                case "0C": //PID(0C): RPM
+                    //((A*256)+B)/4
+                    B = Integer.parseInt(tmpmsg1.substring(6, 8), 16);
+                    Log.d("rpmB", String.valueOf(B));
+                    val = ((A * 256) + B) / 4;
+                    intval = (int) val;
+                    rpmval = intval;
+                    Log.d("rpm", String.valueOf(intval));
+                    rpm.setTargetValue(intval / 100);
+                    break;
+            }
+            }
+       }
+    }else if(dataRecieved.substring(0,2).equals("21")){
                 tmpmsg1 = dataRecieved.trim();
                 int index2 = tmpmsg1.indexOf("61");
                 String newdata=tmpmsg1.substring(index2,tmpmsg1.length());
@@ -1090,34 +1096,25 @@ public class MainActivity extends AppCompatActivity {
                   //  String A1=tmpmsg1.substring(4,6);
                     A = Integer.parseInt(newdata.substring(4, 6), 16);
                     Log.d("A2", String.valueOf(A));
-
                     // String B1=tmpmsg1.substring(6,8);
                     Log.d("valueB2", String.valueOf(B));
                     Log.d("mypid2", String.valueOf(PID1));
-
-
                     switch (PID1) {
-
                         case "04"://PID(04): Engine Load
-
                             // A*100/255
                             Log.d("loadA", String.valueOf(A));
                             val = A * 100 / 255;
                             Log.d("val", String.valueOf(val));
                             int calcLoad = (int) val;
-
                             engineLoad.setText(Integer.toString(calcLoad) + " %");
                             mConversationArrayAdapter.add("Engine Load: " + Integer.toString(calcLoad) + " %");
                             Log.d("load2", String.valueOf(calcLoad));
                             double FuelFlowLH = (mMaf * calcLoad * mEnginedisplacement / 1000.0 / 714.0) + 0.8;
-
                             if (calcLoad == 0)
                                 FuelFlowLH = 0;
-
                             avgconsumption.add(FuelFlowLH);
                             mConversationArrayAdapter.add("Fuel Consumption: " + String.format("%10.1f", calculateAverage(avgconsumption)).trim() + " l/h");
                             break;
-
                         case "05"://PID(05): Coolant Temperature
                             Log.d("coolantA", String.valueOf(A));
                             // A-40
@@ -1127,7 +1124,6 @@ public class MainActivity extends AppCompatActivity {
                             mConversationArrayAdapter.add("Enginetemp: " + Integer.toString(tempC) + " C°");
                             Log.d("coolant2", String.valueOf(coolantTemp));
                             break;
-
                         case "0F"://PID(0F): Intake Temperature
                             tempC = A - 40;
                             intakeairtemp = tempC;
@@ -1151,6 +1147,7 @@ public class MainActivity extends AppCompatActivity {
 
                 }
             }
+
 
         }
 
