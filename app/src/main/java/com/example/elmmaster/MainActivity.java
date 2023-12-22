@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
    3	ISO 9141-2 (5 baud init, 10.4 kbaud)
    4	ISO 14230-4 KWP (5 baud init, 10.4 kbaud)
    5	ISO 14230-4 KWP (fast init, 10.4 kbaud)
-   6	ISO 15765-4 CAN (11 bit ID, 500 kbaud)
+   6	ISO 14230-4 KWP (fast init, 10.4 kbaud)
    7	ISO 15765-4 CAN (29 bit ID, 500 kbaud)
    8	ISO 15765-4 CAN (11 bit ID, 250 kbaud) - used mainly on utility vehicles and Volvo
    9	ISO 15765-4 CAN (29 bit ID, 250 kbaud) - used mainly on utility vehicles and Volvo
@@ -184,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
                             break;
                         case BluetoothService.STATE_CONNECTING:
                             Status.setText(R.string.title_connecting);
-                             Info.setText(R.string.tryconnectbt);
+//                             Info.setText(R.string.tryconnectbt);
                             break;
                         case BluetoothService.STATE_LISTEN:
 
@@ -303,7 +303,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gauges);
-
+        if (ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.BLUETOOTH_CONNECT)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(MainActivity.this,
+                    new String[]{android.Manifest.permission.BLUETOOTH_CONNECT}, MY_PERMISSIONS_REQUEST_BLUETOOTH);
+        }
         // appbar = (AppBarLayout) findViewById(R.id.appbar);
         btn_connect=findViewById(R.id.btn_connect);
 
@@ -387,11 +391,11 @@ public class MainActivity extends AppCompatActivity {
 
                 if (!mBluetoothAdapter.isEnabled()) {
                     Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                    if (ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.BLUETOOTH_CONNECT)
-                            != PackageManager.PERMISSION_GRANTED) {
-                        ActivityCompat.requestPermissions(MainActivity.this,
-                                new String[]{android.Manifest.permission.BLUETOOTH_CONNECT}, MY_PERMISSIONS_REQUEST_BLUETOOTH);
-                    }
+//                    if (ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.BLUETOOTH_CONNECT)
+//                            != PackageManager.PERMISSION_GRANTED) {
+//                        ActivityCompat.requestPermissions(MainActivity.this,
+//                                new String[]{android.Manifest.permission.BLUETOOTH_CONNECT}, MY_PERMISSIONS_REQUEST_BLUETOOTH);
+//                    }
                     startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
                 }else{Intent intent = new Intent(MainActivity.this, DeviceListActivity.class);
                     startActivityForResult(intent, REQUEST_CONNECT_DEVICE);

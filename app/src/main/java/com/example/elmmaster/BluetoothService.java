@@ -4,6 +4,8 @@ T�RKAY B�L�YOR turkaybiliyor@hotmail.com
 
 package com.example.elmmaster;
 
+import android.Manifest;
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
@@ -16,6 +18,7 @@ import android.os.Message;
 import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -52,6 +55,7 @@ public class BluetoothService {
     private AcceptThread mAcceptThread;
     private ConnectThread mConnectThread;
     private ConnectedThread mConnectedThread;
+    Context context;
     private int mState;
 
     /**
@@ -64,8 +68,19 @@ public class BluetoothService {
         mAdapter = BluetoothAdapter.getDefaultAdapter();
         mState = STATE_NONE;
         mBTHandler = handler;
+        this.context=context;
     }
+    private static final int MY_PERMISSIONS_REQUEST_BLUETOOTH = 123;
 
+    protected void onCreate(Bundle savedInstanceState){
+      if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.BLUETOOTH_SCAN)
+              != PackageManager.PERMISSION_GRANTED) {
+          ActivityCompat.requestPermissions((Activity) context,
+                  new String[]{Manifest.permission.BLUETOOTH_SCAN}, MY_PERMISSIONS_REQUEST_BLUETOOTH);
+
+      }
+
+  }
     /**
      * Return the current connection state.
      */
@@ -229,13 +244,12 @@ public class BluetoothService {
      */
     private void connectionFailed() {
         // Send a failure message back to the Activity
-        Message msg = mBTHandler.obtainMessage(MainActivity.MESSAGE_TOAST);
-        Bundle bundle = new Bundle();
-        bundle.putString(MainActivity.TOAST, "Unable to connect bt device");
-        msg.setData(bundle);
-        mBTHandler.sendMessage(msg);
+//        Message msg = mBTHandler.obtainMessage(MainActivity.MESSAGE_TOAST);
+//        Bundle bundle = new Bundle();
+//        bundle.putString(MainActivity.TOAST, "Unable to connect bt device");
+//        msg.setData(bundle);
+//        mBTHandler.sendMessage(msg);
         setState(STATE_NONE);
-
         // Start the service over to restart listening mode
         BluetoothService.this.start();
     }
@@ -359,8 +373,6 @@ public class BluetoothService {
         public void run() {
             Log.i(TAG, "BEGIN mConnectThread SocketType:" + mSocketType);
             setName("ConnectThread" + mSocketType);
-
-            // Always cancel discovery because it will slow down a connection
             mAdapter.cancelDiscovery();
 
             // Make a connection to the BluetoothSocket

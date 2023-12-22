@@ -80,16 +80,16 @@ public class DeviceListActivity extends Activity {
             // Get the device MAC address, which is the last 17 chars in the View
             String info = ((TextView) textView).getText().toString();
             String address = info.substring(info.length() - 17);
-            if(info.contains("iFIX")||info.contains("OBD")) {
-            // Create the result Intent and include the MAC address
-             Intent intent = new Intent();
-             intent.putExtra(EXTRA_DEVICE_ADDRESS, address);
+            if (info.contains("iFIX") || info.contains("OBD")) {
+                // Create the result Intent and include the MAC address
+                Intent intent = new Intent();
+                intent.putExtra(EXTRA_DEVICE_ADDRESS, address);
                 Log.d("address", address);
 
-             setResult(Activity.RESULT_OK, intent);
-             finish();
-             }else {
-             Toast.makeText(DeviceListActivity.this,"Please Select an Ifix device",Toast.LENGTH_SHORT).show();
+                setResult(Activity.RESULT_OK, intent);
+                finish();
+            } else {
+                Toast.makeText(DeviceListActivity.this, "Please Select an Ifix device", Toast.LENGTH_SHORT).show();
             }
         }
     };
@@ -188,6 +188,13 @@ public class DeviceListActivity extends Activity {
         // Setup the window
         //requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.device_list);
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.BLUETOOTH_SCAN}, MY_PERMISSIONS_REQUEST_BLUETOOTH);
+
+        }
         connectimg = findViewById(R.id.bt_connect_img);
         notconnectimg = findViewById(R.id.bt_nconnect_img);
         available = findViewById(R.id.avbl_txt);
@@ -222,7 +229,7 @@ public class DeviceListActivity extends Activity {
                     startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
                 }
                 doDiscovery();
-                Mylogger.logAnalysePIDS( "this is my log statement");
+                Mylogger.logAnalysePIDS("this is my log statement");
             }
         });
 
@@ -274,15 +281,13 @@ public class DeviceListActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.BLUETOOTH_SCAN}, MY_PERMISSIONS_REQUEST_BLUETOOTH);
-        }
         // Make sure we're not doing discovery anymore
-        if (mBtAdapter != null) {
+//        if (ContextCompat.checkSelfPermission(DeviceListActivity.this, Manifest.permission.BLUETOOTH_SCAN)
+//                != PackageManager.PERMISSION_GRANTED) {
+//            ActivityCompat.requestPermissions(DeviceListActivity.this,
+//                    new String[]{Manifest.permission.BLUETOOTH_SCAN}, MY_PERMISSIONS_REQUEST_BLUETOOTH);
+//        }
             mBtAdapter.cancelDiscovery();
-        }
 
         // Unregister broadcast listeners
         this.unregisterReceiver(mReceiver);
